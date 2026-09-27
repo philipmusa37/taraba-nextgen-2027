@@ -74,20 +74,91 @@ document.getElementById('app').addEventListener('submit',async e=>{
       redirect:'follow'
     });
 
-    if(!response.ok) throw new Error('Submission request failed.');
+  if (!response.ok) {
+  throw new Error('Submission request failed.');
+}
 
-    const result=await response.json();
-    if(!result.success) throw new Error(result.message||'Submission failed.');
+const result = await response.json();
+
+// DUPLICATE APPLICATION
+if (result.duplicate === true) {
+
+  success.innerHTML = `
+    <div style="text-align:left;">
+
+      <b style="font-size:18px;">
+        ✓ Your Application Is Already With Us
+      </b>
+
+      <br><br>
+
+      ${result.message}
+
+      <br><br>
+
+      Only one application is permitted per applicant,
+      so there is no need to submit another application.
+
+      <br><br>
+
+      <b>While you wait...</b><br>
+      Relive the Taraba NEXTGEN Conference 2026 and explore
+      highlights and memorable moments from the previous edition.
+
+      <br><br>
+
+      <a href="2026-highlights.html"
+         style="
+           display:inline-block;
+           padding:12px 20px;
+           background:#5c116f;
+           color:#ffffff;
+           text-decoration:none;
+           border-radius:25px;
+           font-weight:600;
+         ">
+         Relive NEXTGEN 2026 →
+      </a>
+
+    </div>
+  `;
+
+  success.style.display = 'block';
+  success.style.background = '#f6f0f8';
+  success.style.border = '1px solid #d9b8e2';
+  success.style.color = '#4a1858';
+
+  success.scrollIntoView({
+    behavior: 'smooth',
+    block: 'center'
+  });
+
+  submit.disabled = false;
+  submit.textContent = originalText;
+
+  return;
+}
+
+  submit.disabled = false;
+  submit.textContent = originalText;
+
+  return;
+}
+
+// OTHER BACKEND ERROR
+if (!result.success) {
+  throw new Error(result.message || 'Submission failed.');
+}
 
     success.innerHTML=`<b>Application Received ✓</b><br><br>
       Thank you for applying to the <b>Taraba NEXTGEN Youth Stakeholders Conference 2027</b>.<br><br>
       Your Application ID is: <b>${result.applicationId}</b><br><br>
       Please keep this ID for reference. A confirmation email will be sent to the email address you provided.`;
-    success.style.display='block';
-    success.scrollIntoView({behavior:'smooth',block:'center'});
+   success.style.display='block';
+success.scrollIntoView({behavior:'smooth',block:'center'});
 
-    form.querySelectorAll('input,select,textarea,button').forEach(el=>el.disabled=true);
-    submit.textContent='Application Submitted ✓';
+form.querySelectorAll('input,select,textarea,button').forEach(el=>el.disabled=true);
+submit.textContent='Application Submitted ✓';
 
   }catch(err){
     console.error(err);
