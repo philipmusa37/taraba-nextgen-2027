@@ -457,7 +457,20 @@
       Yes, I agree
     </label>
   </div>
+<p style="margin-top:16px;color:var(--muted);line-height:1.6;">
+  By submitting this application, you confirm that you have read and agree to our
+  <a href="#" id="openTerms" style="color:#0f766e;font-weight:700;text-decoration:underline;">
+    Application Terms & Privacy Notice
+  </a>.
+</p>
 
+<p style="font-size:13px;color:var(--muted);line-height:1.6;">
+  Questions about your application or personal information?
+  Contact us at
+  <a href="mailto:unicornyouthdevelopmentnetwork@gmail.com">unicornyouthdevelopmentnetwork@gmail.com</a>
+  or
+  <a href="mailto:unicornemergeyouthnetwork@gmail.com">unicornemergeyouthnetwork@gmail.com</a>.
+</p>
   <p class="notice">
     Your application will be securely submitted to Unicorn Youth Development Network.
     Please click Submit only once.
@@ -524,9 +537,154 @@
   </div>
 
 </div>
+     <!-- Application Terms & Privacy Modal -->
+<div id="termsModal" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.65);
+  z-index:9999;
+  padding:20px;
+  overflow-y:auto;
+">
+
+  <div style="
+    max-width:700px;
+    margin:40px auto;
+    background:#fff;
+    color:#1f2937;
+    border-radius:16px;
+    padding:28px;
+    position:relative;
+    line-height:1.7;
+  ">
+
+    <button type="button" id="closeTerms" style="
+      position:absolute;
+      top:14px;
+      right:16px;
+      border:none;
+      background:none;
+      font-size:26px;
+      cursor:pointer;
+      color:#374151;
+    ">&times;</button>
+
+    <h2 style="margin-top:0;">Application Terms & Privacy Notice</h2>
+
+    <p>
+      This notice explains the terms governing applications to the
+      <strong>Taraba NEXTGEN Youth Stakeholders Conference 2027</strong>
+      and how Unicorn Youth Development Network handles information
+      submitted by applicants.
+    </p>
+
+    <h3>1. Application Terms</h3>
+    <p>
+      By submitting an application, you confirm that the information you
+      provide is accurate and has been provided by you. Submission does not
+      guarantee selection for the conference. Applications may be reviewed
+      based on eligibility requirements, conference objectives, available
+      spaces and the selection process.
+    </p>
+
+    <p>
+      False, misleading or deliberately inaccurate information may result
+      in an application being disqualified.
+    </p>
+
+    <h3>2. Information We Collect</h3>
+    <p>
+      We collect the information you voluntarily provide through the
+      application form, including your contact details, demographic
+      information, background, interests, experience, motivation and
+      responses to conference-related questions.
+    </p>
+
+    <h3>3. How Your Information Is Used</h3>
+    <p>
+      Applicant information may be used to review applications, select and
+      communicate with participants, plan and administer the conference,
+      provide relevant conference updates and coordinate appropriate
+      post-conference activities.
+    </p>
+
+    <h3>4. Access and Handling</h3>
+    <p>
+      Applicant information will be accessible only to authorised members
+      of Unicorn Youth Development Network and persons involved in the
+      application, selection or conference administration where access is
+      reasonably necessary.
+    </p>
+
+    <p>
+      We do not sell applicants' personal information or use it for
+      unrelated commercial purposes.
+    </p>
+
+    <h3>5. Applicant Consent</h3>
+    <p>
+      By submitting the application, you acknowledge this notice and
+      consent to the collection and use of the information you provide for
+      the purposes described above.
+    </p>
+
+    <h3>6. Contact & Privacy Enquiries</h3>
+    <p>
+      If you have questions about your application or how your information
+      is handled, contact Unicorn Youth Development Network:
+    </p>
+
+    <p>
+      <a href="mailto:unicornyouthdevelopmentnetwork@gmail.com">
+        unicornyouthdevelopmentnetwork@gmail.com
+      </a><br>
+      <a href="mailto:unicornemergeyouthnetwork@gmail.com">
+        unicornemergeyouthnetwork@gmail.com
+      </a>
+    </p>
+
+    <button type="button" id="termsDone" style="
+      margin-top:10px;
+      padding:12px 20px;
+      border:none;
+      border-radius:8px;
+      background:#0f766e;
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
+    ">I Understand</button>
+
+  </div>
+</div>
   
   <footer><div class="foot"><div><strong>Unicorn Youth Development Network</strong><p>Youth Emerge. Build and Lead. • Organiser of Taraba NEXTGEN Conference</p></div><div class="socials"><a class="social facebook" href="https://www.facebook.com/profile.php?id=61585072857531" target="_blank" rel="noopener">Facebook</a><a class="social instagram" href="https://www.instagram.com/unicornyouthdevelopment?igsh=MXZxanhrdmpmb2d1cQ==" target="_blank" rel="noopener">Instagram</a><a class="social twitter" href="https://x.com/UnicornYouth" target="_blank" rel="noopener">X</a></div></div></footer>
 <script>
+   // Application Terms & Privacy Modal
+const termsModal = document.getElementById('termsModal');
+const openTerms = document.getElementById('openTerms');
+const closeTerms = document.getElementById('closeTerms');
+const termsDone = document.getElementById('termsDone');
+
+openTerms.addEventListener('click', function(e) {
+  e.preventDefault();
+  termsModal.style.display = 'block';
+  document.body.style.overflow = 'hidden';
+});
+
+function closeTermsModal() {
+  termsModal.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+closeTerms.addEventListener('click', closeTermsModal);
+termsDone.addEventListener('click', closeTermsModal);
+
+termsModal.addEventListener('click', function(e) {
+  if (e.target === termsModal) {
+    closeTermsModal();
+  }
+});
 const optionSets=document.querySelectorAll('.options');let setNo=0;optionSets.forEach(box=>{const vals=box.textContent.trim().split('|');box.textContent='';const name='multi_'+(++setNo);vals.forEach(v=>{const l=document.createElement('label');l.className='option';l.innerHTML=`<input type="checkbox" name="${name}" value="${v}"> <span>${v}</span>`;box.appendChild(l)});box.addEventListener('change',e=>{const max=+box.dataset.max;if(box.querySelectorAll('input:checked').length>max){e.target.checked=false;alert(`Please select no more than ${max}.`)}})});
 const steps=[...document.querySelectorAll('.step')],next=document.getElementById('next'),back=document.getElementById('back'),submit=document.getElementById('submit'),bar=document.getElementById('bar'),stepText=document.getElementById('stepText'),pct=document.getElementById('pct');let current=0;
 function showStep(){steps.forEach((s,i)=>s.classList.toggle('active',i===current));const p=Math.round((current+1)/steps.length*100);bar.style.width=p+'%';stepText.textContent=`Step ${current+1} of ${steps.length}`;pct.textContent=p+'%';back.style.visibility=current?'visible':'hidden';next.style.display=current===steps.length-1?'none':'block';submit.style.display=current===steps.length-1?'block':'none';document.getElementById('apply').scrollIntoView({behavior:'smooth',block:'start'})}
@@ -660,6 +818,28 @@ form.querySelectorAll('input,select,textarea,button').forEach(el=>el.disabled=tr
 submit.textContent='Application Submitted ✓';
 
   }catch(err){
+    
+
+const reliveBtn = document.createElement('a');
+reliveBtn.href = '2026-highlights.html';
+reliveBtn.textContent = 'Relive NEXTGEN 2026 →';
+reliveBtn.style.cssText = `
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  margin-left:10px;
+  padding:12px 20px;
+  border-radius:8px;
+  background:#0f766e;
+  color:#fff;
+  text-decoration:none;
+  font-weight:700;
+  cursor:pointer;
+`;
+
+submit.insertAdjacentElement('afterend', reliveBtn);
+
+}catch(err){
     console.error(err);
     success.innerHTML='<b>We could not submit your application.</b><br>Please check your internet connection and try again. If the problem continues, contact Unicorn Youth Development Network.';
     success.style.display='block';
