@@ -665,26 +665,37 @@ const termsModal = document.getElementById('termsModal');
 const openTerms = document.getElementById('openTerms');
 const closeTerms = document.getElementById('closeTerms');
 const termsDone = document.getElementById('termsDone');
-
-openTerms.addEventListener('click', function(e) {
-  e.preventDefault();
-  termsModal.style.display = 'block';
-  document.body.style.overflow = 'hidden';
-});
-
-function closeTermsModal() {
-  termsModal.style.display = 'none';
-  document.body.style.overflow = '';
+if (openTerms && termsModal) {
+  openTerms.addEventListener('click', function(e) {
+    e.preventDefault();
+    termsModal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  });
 }
 
-closeTerms.addEventListener('click', closeTermsModal);
-termsDone.addEventListener('click', closeTermsModal);
-
-termsModal.addEventListener('click', function(e) {
-  if (e.target === termsModal) {
-    closeTermsModal();
+function closeTermsModal() {
+  if (termsModal) {
+    termsModal.style.display = 'none';
+    document.body.style.overflow = '';
   }
-});
+}
+
+if (closeTerms) {
+  closeTerms.addEventListener('click', closeTermsModal);
+}
+
+if (termsDone) {
+  termsDone.addEventListener('click', closeTermsModal);
+}
+
+if (termsModal) {
+  termsModal.addEventListener('click', function(e) {
+    if (e.target === termsModal) {
+      closeTermsModal();
+    }
+  });
+}
+
 const optionSets=document.querySelectorAll('.options');let setNo=0;optionSets.forEach(box=>{const vals=box.textContent.trim().split('|');box.textContent='';const name='multi_'+(++setNo);vals.forEach(v=>{const l=document.createElement('label');l.className='option';l.innerHTML=`<input type="checkbox" name="${name}" value="${v}"> <span>${v}</span>`;box.appendChild(l)});box.addEventListener('change',e=>{const max=+box.dataset.max;if(box.querySelectorAll('input:checked').length>max){e.target.checked=false;alert(`Please select no more than ${max}.`)}})});
 const steps=[...document.querySelectorAll('.step')],next=document.getElementById('next'),back=document.getElementById('back'),submit=document.getElementById('submit'),bar=document.getElementById('bar'),stepText=document.getElementById('stepText'),pct=document.getElementById('pct');let current=0;
 function showStep(){steps.forEach((s,i)=>s.classList.toggle('active',i===current));const p=Math.round((current+1)/steps.length*100);bar.style.width=p+'%';stepText.textContent=`Step ${current+1} of ${steps.length}`;pct.textContent=p+'%';back.style.visibility=current?'visible':'hidden';next.style.display=current===steps.length-1?'none':'block';submit.style.display=current===steps.length-1?'block':'none';document.getElementById('apply').scrollIntoView({behavior:'smooth',block:'start'})}
