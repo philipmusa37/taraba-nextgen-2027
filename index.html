@@ -748,10 +748,11 @@ document.getElementById('app').addEventListener('submit',async e=>{
       redirect:'follow'
     });
 
-  if (!response.ok) {
-  throw new Error('Submission request failed.');
-}
+ const result = await response.json();
 
+// DUPLICATE APPLICATION
+if (result.duplicate === true) {
+   
 const result = await response.json();
 
 // DUPLICATE APPLICATION
