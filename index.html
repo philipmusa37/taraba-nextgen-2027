@@ -663,22 +663,23 @@
     <p>
       <a href="mailto:unicornyouthdevelopmentnetwork@gmail.com">
         unicornyouthdevelopmentnetwork@gmail.com
-      </a><br>
-      <a href="mailto:unicornemergeyouthnetwork@gmail.com">
-        unicornemergeyouthnetwork@gmail.com
       </a>
     </p>
 
-    <button type="button" id="termsDone" style="
-      margin-top:10px;
-      padding:12px 20px;
-      border:none;
-      border-radius:8px;
-      background:#0f766e;
-      color:#fff;
-      font-weight:700;
-      cursor:pointer;
-    ">I Understand</button>
+    <div style="margin-top:22px;padding:16px;border:1px solid #e6e9ef;border-radius:12px;background:#f8fafc;">
+      <label style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px;cursor:pointer;">
+        <input type="checkbox" id="acceptTerms" style="width:auto;margin-top:3px;">
+        <span>I have read and accept the Application Terms and Privacy Notice.</span>
+      </label>
+      <label style="display:flex;gap:10px;align-items:flex-start;margin-bottom:16px;cursor:pointer;">
+        <input type="checkbox" id="acceptMedia" style="width:auto;margin-top:3px;">
+        <span>I consent to the photography, video and media use described above.</span>
+      </label>
+      <button type="button" id="acceptAndSubmit" disabled style="
+        padding:12px 20px;border:none;border-radius:8px;background:#0f766e;color:#fff;
+        font-weight:700;cursor:pointer;opacity:.55;
+      ">Accept &amp; Submit Application</button>
+    </div>
 
   </div>
 </div>
@@ -758,7 +759,7 @@ document.getElementById('app').addEventListener('submit', e=>{
 });
 
 function updateConsentButton(){
-  acceptAndSubmit.disabled=!(acceptTerms.checked && acceptMedia.checked);
+  acceptAndSubmit.disabled=!(acceptTerms.checked && acceptMedia.checked); acceptAndSubmit.style.opacity=acceptAndSubmit.disabled?'.55':'1';
 }
 acceptTerms.addEventListener('change',updateConsentButton);
 acceptMedia.addEventListener('change',updateConsentButton);
