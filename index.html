@@ -908,7 +908,9 @@ if (result.duplicate === true) {
 
 // OTHER BACKEND ERROR
 if (!result.success) {
-  throw new Error(result.message || 'Submission failed.');
+  const backendError = new Error(result.message || 'Submission failed.');
+  backendError.fromBackend = true;
+  throw backendError;
 }
 
     success.innerHTML=`<b>Application Received ✓</b><br><br>
@@ -943,7 +945,11 @@ submit.insertAdjacentElement('afterend', reliveBtn);
 
 }catch(err){
     console.error(err);
-    success.innerHTML='<b>We could not submit your application.</b><br>Please check your internet connection and try again. If the problem continues, contact Unicorn Youth Development Network.';
+    const shownMsg = err && err.fromBackend
+      ? err.message
+      : 'Please check your internet connection and try again. If the problem continues, contact Unicorn Youth Development Network.';
+    success.innerHTML='<b>We could not submit your application.</b><br>';
+    success.appendChild(document.createTextNode(shownMsg));
     success.style.display='block';
     success.style.background='#fff4ed';
     success.style.borderColor='#ffd6ae';
