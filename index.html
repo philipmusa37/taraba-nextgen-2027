@@ -990,4 +990,444 @@ if (supportBtn && supportPanel && supportClose) {
     }
   });
 
-}</script></body></html>
+}</script><script>
+/* ===== SITE WIDGETS: Donate page, donate banner, header/footer Donate links ===== */
+/* =====================================================
+   UYDN / TARABA NEXTGEN — SHARED SITE WIDGETS
+   One file, loaded on every page, that adds:
+     1. a "Donate" button (header + footer) -> opens the Donate page (#donate)
+     2. a blinking donate message on the landing page
+     3. the main Donate page (built into this file)
+     4. an optional floating "Watch Testimonials" link
+   Edit the settings below ONCE; every page updates.
+===================================================== */
+
+(function () {
+
+  /* ---------- SETTINGS ---------- */
+
+  // Bank account for donations
+  var ACCOUNT_NAME   = 'UNICORN YOUTH DEVELOPMENT NETWORK LTD/GTE';
+  var ACCOUNT_NUMBER = '2009705376';
+  var BANK_NAME      = 'FCMB PLC';
+
+  // Donors send their receipt to this address
+  var ORG_EMAIL = 'unicornyouthdevelopmentnetwork@gmail.com';
+
+  // WhatsApp for international donors (country code, no + or 0).
+  // The number is used in the link only; it is not shown on the button.
+  var WHATSAPP_NUMBER  = '2348169605610';
+
+  // The Donate page lives inside this same file and opens at  index.html#donate
+  var DONATE_PAGE = '#donate';
+
+  // Optional online payment link (Paystack, Flutterwave, PayPal...).
+  // Leave '' if you don't have one.
+  var DONATE_URL = '';
+
+  // Testimonial videos (YouTube playlist / channel / your own page).
+  // Leave '' to hide the testimonials link.
+  var TESTIMONIALS_URL = '';
+
+  // Pages that show the blinking donate message at the top.
+  // 'home' = index.html (the landing page).
+  var BANNER_PAGES = ['home'];
+
+  /* ------------------------------------------ */
+
+
+  var file = (location.pathname.split('/').pop() || 'index.html')
+    .replace(/\.html?$/i, '') || 'home';
+  if (file === 'index') file = 'home';
+
+  var onDonatePage = false;
+
+  function tag(url, source) {
+    if (!url) return '';
+    try {
+      var u = new URL(url, location.href);
+      u.searchParams.set('ref', 'uydn-' + file);
+      u.searchParams.set('utm_source', 'uydn-website');
+      u.searchParams.set('utm_medium', source);
+      return u.toString();
+    } catch (e) { return url; }
+  }
+
+  function isExternal(url) {
+    try { return new URL(url, location.href).origin !== location.origin; }
+    catch (e) { return true; }
+  }
+
+  function setTarget(a, url) {
+    if (isExternal(url)) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+  }
+
+  function esc(v) {
+    return String(v || '').replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function copyText(text, btn, label) {
+    label = label || 'Copy';
+    function done() {
+      btn.textContent = 'Copied ✓';
+      btn.classList.add('done');
+      setTimeout(function () { btn.textContent = label; btn.classList.remove('done'); }, 2000);
+    }
+    function fallback() {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, fallback);
+    } else { fallback(); }
+  }
+
+
+  /* ---------- STYLES ---------- */
+
+  var css = '' +
+
+    /* header donate button */
+    '.uydn-donate{background:linear-gradient(90deg,#f2b51d,#ffcf4d)!important;' +
+    'color:#35104f!important;font-weight:800;text-decoration:none;margin-right:8px;' +
+    'white-space:nowrap;animation:uydnPulse 2s ease-in-out infinite}' +
+    '.uydn-donate:hover{filter:brightness(1.05)}' +
+    '@keyframes uydnPulse{0%,100%{box-shadow:0 4px 14px rgba(242,181,29,.35)}' +
+    '50%{box-shadow:0 0 0 7px rgba(242,181,29,.22)}}' +
+
+    /* blinking banner */
+    '.uydn-banner{display:flex;align-items:center;justify-content:center;gap:10px;' +
+    'background:linear-gradient(90deg,#35104f,#5c116f);color:#fff;padding:9px 44px 9px 16px;' +
+    'position:relative;font:700 14px/1.35 Inter,Arial,sans-serif;text-align:center}' +
+    '.uydn-banner a.msg{color:#fff;text-decoration:none;display:inline-flex;flex-wrap:wrap;' +
+    'justify-content:center;align-items:center;gap:8px}' +
+    '.uydn-blink{animation:uydnBlink 1.6s ease-in-out infinite}' +
+    '@keyframes uydnBlink{0%,100%{opacity:1}50%{opacity:.3}}' +
+    '.uydn-banner .go{background:#f2b51d;color:#35104f;border-radius:999px;padding:6px 14px;' +
+    'font-weight:800;white-space:nowrap}' +
+    '.uydn-banner .x{position:absolute;right:10px;top:50%;transform:translateY(-50%);border:0;' +
+    'background:none;color:#fff;font-size:22px;line-height:1;cursor:pointer;opacity:.8}' +
+    '@media(prefers-reduced-motion:reduce){.uydn-blink,.uydn-donate{animation:none}}' +
+
+    /* floating testimonials */
+    '.uydn-testi{position:fixed;left:16px;bottom:16px;z-index:9998;display:inline-flex;' +
+    'align-items:center;gap:8px;padding:12px 16px;border-radius:999px;background:#fff;' +
+    'color:#5c116f;font:800 14px/1 Inter,Arial,sans-serif;text-decoration:none;' +
+    'border:2px solid #5c116f;box-shadow:0 10px 30px rgba(53,16,79,.22)}' +
+    '.uydn-testi:hover{background:#5c116f;color:#fff}' +
+    '.uydn-testi .long{display:inline}.uydn-testi .short{display:none}' +
+
+    /* footer links */
+    '.uydn-foot-links{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}' +
+    '.uydn-foot-links a{display:inline-block;padding:9px 16px;border-radius:999px;' +
+    'font-weight:800;font-size:13px;text-decoration:none}' +
+    '.uydn-foot-links .d{background:#f2b51d;color:#35104f}' +
+    '.uydn-foot-links .t{border:1.5px solid #fff;color:#fff}' +
+
+    /* donate page */
+    '.uydn-dp{max-width:640px;margin:0 auto;padding:30px 18px 50px;color:#152033;' +
+    'font-family:Inter,Arial,sans-serif}' +
+    '.uydn-dp h1{margin:0 0 8px;font-size:30px;line-height:1.2;color:#5c116f}' +
+    '.uydn-dp .lead{margin:0 0 22px;color:#667085;font-size:16px;line-height:1.6}' +
+    '.uydn-card{background:#fff;border:1px solid #e6e9ef;border-radius:18px;padding:20px 20px 12px;' +
+    'margin-bottom:18px;box-shadow:0 8px 28px rgba(53,16,79,.07)}' +
+    '.uydn-card h2{margin:0 0 4px;font-size:18px;color:#35104f}' +
+    '.uydn-card .sub{margin:0 0 14px;font-size:14px;color:#667085;line-height:1.5}' +
+    '.uydn-row{background:#f6f0f8;border-radius:12px;padding:11px 14px;margin-bottom:10px}' +
+    '.uydn-row small{display:block;font-size:11px;font-weight:800;letter-spacing:.06em;' +
+    'text-transform:uppercase;color:#667085;margin-bottom:3px}' +
+    '.uydn-row b{font-size:16px;word-break:break-word}' +
+    '.uydn-line{display:flex;align-items:center;justify-content:space-between;gap:10px}' +
+    '.uydn-line a{color:#5c116f;font-weight:700;word-break:break-all;font-size:15px}' +
+    '.uydn-acct{font-size:24px!important;letter-spacing:.06em}' +
+    '.uydn-copy{border:0;border-radius:999px;background:#5c116f;color:#fff;font-weight:800;' +
+    'font-size:13px;padding:9px 16px;cursor:pointer;white-space:nowrap;flex-shrink:0}' +
+    '.uydn-copy.done{background:#0bb77a}' +
+    '.uydn-online,.uydn-wa{display:flex;align-items:center;justify-content:center;gap:8px;' +
+    'padding:13px;border-radius:999px;font-weight:800;text-decoration:none;margin-bottom:12px;' +
+    'font-size:15px}' +
+    '.uydn-online{background:linear-gradient(90deg,#f2b51d,#ffcf4d);color:#35104f}' +
+    '.uydn-wa{background:#25d366;color:#fff}' +
+    '.uydn-back{display:inline-block;margin-top:6px;color:#5c116f;font-weight:700;' +
+    'text-decoration:none;border:0;background:none;padding:0;cursor:pointer;font:700 16px Inter,Arial,sans-serif}' +
+    '.uydn-view{position:fixed;inset:0;z-index:10001;background:#f6f8fb;overflow:auto;display:none}' +
+    '.uydn-view.open{display:block}' +
+    '.uydn-vbar{position:sticky;top:0;z-index:2;background:#fff;border-bottom:1px solid #edf0f3;' +
+    'display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px;' +
+    'font:800 14px Inter,Arial,sans-serif;color:#5c116f}' +
+    '.uydn-vclose{border:0;border-radius:999px;background:#f3e9f5;color:#5c116f;font-weight:800;' +
+    'font-size:13px;padding:9px 16px;cursor:pointer;white-space:nowrap;flex-shrink:0}' +
+
+    '@media(max-width:520px){' +
+    'header nav .btn{padding:9px 11px!important;font-size:12px!important;white-space:nowrap}' +
+    '.uydn-donate{margin-right:4px}' +
+    '.uydn-banner{font-size:13px;padding:8px 38px 8px 10px}' +
+    '.uydn-testi{left:10px;bottom:12px;padding:10px 13px;font-size:12px}' +
+    '.uydn-testi .long{display:none}.uydn-testi .short{display:inline}' +
+    '.uydn-dp h1{font-size:25px}.uydn-acct{font-size:20px!important}' +
+    '.uydn-line a{font-size:12.5px;word-break:normal;overflow-wrap:anywhere}' +
+    '.uydn-line{flex-wrap:wrap}}';
+
+  var style = document.createElement('style');
+  style.textContent = css;
+  document.head.appendChild(style);
+
+
+  /* ---------- DONATE PAGE CONTENT ---------- */
+
+  function copyRow(label, value, extraClass, asLink) {
+    return '<div class="uydn-row"><small>' + esc(label) + '</small>' +
+      '<div class="uydn-line">' +
+      (asLink
+        ? '<a href="mailto:' + esc(value) + '">' + esc(value) + '</a>'
+        : '<b class="' + (extraClass || '') + '">' + esc(value) + '</b>') +
+      '<button type="button" class="uydn-copy" data-copy="' + esc(value) + '">Copy</button>' +
+      '</div></div>';
+  }
+
+  function renderDonatePage(root) {
+
+    var waText = encodeURIComponent(
+      'Hello Unicorn Youth Development Network, I am donating from outside Nigeria. ' +
+      'Please share the donation details.'
+    );
+
+    var html = '<div class="uydn-dp">' +
+      '<h1>Support Unicorn Youth Development Network</h1>' +
+      '<p class="lead">Your gift helps young people in Taraba grow, build and prosper. ' +
+      'Thank you for standing with them.</p>';
+
+    if (DONATE_URL) {
+      html += '<a class="uydn-online" id="uydnOnline" href="#">Donate online →</a>';
+    }
+
+    /* 1. bank transfer */
+    html += '<div class="uydn-card"><h2>Give by bank transfer</h2>' +
+      '<p class="sub">Transfer to the organisation account below.</p>' +
+      copyRow('Account name', ACCOUNT_NAME, '', false) +
+      '<div class="uydn-row"><small>Bank</small><b>' + esc(BANK_NAME) + '</b></div>' +
+      copyRow('Account number', ACCOUNT_NUMBER, 'uydn-acct', false) +
+      '</div>';
+
+    /* 2. receipts */
+    html += '<div class="uydn-card"><h2>After you give, send your receipt</h2>' +
+      '<p class="sub">Email your payment receipt or screenshot to the address below ' +
+      'so we can confirm and thank you.</p>' +
+      copyRow('Organisation email', ORG_EMAIL, '', true) +
+      '</div>';
+
+    /* 3. international */
+    html += '<div class="uydn-card"><h2>Donating from outside Nigeria?</h2>' +
+      '<p class="sub">Message us on WhatsApp and we will send you the donation details ' +
+      'that work for you.</p>' +
+      '<a class="uydn-wa" id="uydnWa" target="_blank" rel="noopener noreferrer" ' +
+      'href="https://wa.me/' + esc(WHATSAPP_NUMBER) + '?text=' + waText + '">' +
+      '💬 Chat on WhatsApp</a>' +
+      '</div>';
+
+    html += '<button type="button" class="uydn-back" id="uydnBackBtn">← Back to the conference page</button></div>';
+
+    root.innerHTML = html;
+
+    if (DONATE_URL) {
+      var online = root.querySelector('#uydnOnline');
+      online.href = tag(DONATE_URL, 'donate-page');
+      setTarget(online, online.href);
+    }
+
+    root.querySelectorAll('.uydn-copy').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        copyText(btn.getAttribute('data-copy'), btn);
+      });
+    });
+  }
+
+
+  /* ---------- DONATE VIEW (opens at  index.html#donate) ---------- */
+
+  var view = null;
+
+  function buildView() {
+    view = document.createElement('div');
+    view.className = 'uydn-view';
+    view.id = 'uydnDonateView';
+    view.setAttribute('role', 'dialog');
+    view.setAttribute('aria-modal', 'true');
+    view.setAttribute('aria-label', 'Donate');
+    view.innerHTML =
+      '<div class="uydn-vbar"><span>UNICORN YOUTH DEVELOPMENT NETWORK</span>' +
+      '<button type="button" class="uydn-vclose" id="uydnVClose">✕ Close</button></div>' +
+      '<div id="uydnDonatePage"></div>';
+    document.body.appendChild(view);
+    renderDonatePage(view.querySelector('#uydnDonatePage'));
+    view.querySelector('#uydnVClose').addEventListener('click', leaveDonate);
+    view.querySelector('#uydnBackBtn').addEventListener('click', leaveDonate);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && view.classList.contains('open')) leaveDonate();
+    });
+  }
+
+  function openView() {
+    if (!view) buildView();
+    view.classList.add('open');
+    view.scrollTop = 0;
+    document.body.style.overflow = 'hidden';
+    var c = view.querySelector('#uydnVClose');
+    if (c) c.focus();
+  }
+
+  function closeView() {
+    if (!view) return;
+    view.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function leaveDonate() {
+    if (location.hash === '#donate') {
+      try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+    }
+    closeView();
+  }
+
+  function syncRoute() {
+    if (location.hash === '#donate') openView();
+    else closeView();
+  }
+
+
+  function init() {
+
+    /* ---------- DONATE PAGE ---------- */
+
+    window.addEventListener('hashchange', syncRoute);
+
+    // Any link to #donate opens the Donate page directly,
+    // without depending on the browser's hash handling.
+    document.addEventListener('click', function (e) {
+      var link = e.target.closest ? e.target.closest('a[href="#donate"]') : null;
+      if (!link) return;
+      e.preventDefault();
+      try { history.pushState(null, '', '#donate'); } catch (err) {}
+      openView();
+    });
+
+    syncRoute();
+
+
+    /* ---------- 1. HEADER DONATE BUTTON ---------- */
+
+    if (!onDonatePage && !document.getElementById('uydnDonateTop')) {
+
+      var a = document.createElement('a');
+      a.id = 'uydnDonateTop';
+      a.className = 'btn uydn-donate';
+      a.href = DONATE_PAGE;
+      a.textContent = '♥ Donate';
+
+      var nav = document.querySelector('header nav') || document.querySelector('nav');
+
+      if (nav) {
+        var lastBtn = nav.querySelector('a.btn:last-of-type');
+        if (lastBtn) nav.insertBefore(a, lastBtn);
+        else nav.appendChild(a);
+      } else {
+        a.style.cssText = 'position:fixed;top:14px;right:14px;z-index:9999;' +
+                          'padding:10px 16px;border-radius:999px';
+        document.body.appendChild(a);
+      }
+    }
+
+
+    /* ---------- 2. BLINKING BANNER (landing page) ---------- */
+
+    var bannerClosed = false;
+    try { bannerClosed = sessionStorage.getItem('uydnBannerClosed') === '1'; } catch (e) {}
+
+    if (BANNER_PAGES.indexOf(file) !== -1 && !bannerClosed &&
+        !document.getElementById('uydnBanner')) {
+
+      var b = document.createElement('div');
+      b.id = 'uydnBanner';
+      b.className = 'uydn-banner';
+      b.innerHTML =
+        '<a class="msg" href="' + esc(DONATE_PAGE) + '">' +
+        '<span class="uydn-blink">♥ Help a young person in Taraba grow, build and prosper</span>' +
+        '<span class="go">Donate Now →</span></a>' +
+        '<button type="button" class="x" aria-label="Close message">×</button>';
+
+      b.querySelector('.x').addEventListener('click', function () {
+        b.remove();
+        try { sessionStorage.setItem('uydnBannerClosed', '1'); } catch (e) {}
+      });
+
+      var topBar = document.querySelector('.top');
+      if (topBar && topBar.parentNode === document.body) {
+        topBar.insertAdjacentElement('afterend', b);
+      } else {
+        document.body.insertBefore(b, document.body.firstChild);
+      }
+    }
+
+
+    /* ---------- 3. FLOATING TESTIMONIALS LINK ---------- */
+
+    if (TESTIMONIALS_URL && !document.getElementById('uydnTesti')) {
+      var tUrl = tag(TESTIMONIALS_URL, 'floating-testimonials');
+      var t = document.createElement('a');
+      t.id = 'uydnTesti';
+      t.className = 'uydn-testi';
+      t.href = tUrl;
+      t.innerHTML = '▶ <span class="long">Watch Testimonials</span><span class="short">Testimonials</span>';
+      setTarget(t, tUrl);
+      document.body.appendChild(t);
+    }
+
+
+    /* ---------- 4. FOOTER LINKS ---------- */
+
+    var foot = document.querySelector('footer');
+    var wantDonateFoot = !onDonatePage;
+
+    if (foot && (wantDonateFoot || TESTIMONIALS_URL) &&
+        !foot.querySelector('.uydn-foot-links')) {
+
+      var wrap = document.createElement('div');
+      wrap.className = 'uydn-foot-links';
+
+      if (wantDonateFoot) {
+        var fd = document.createElement('a');
+        fd.className = 'd';
+        fd.href = DONATE_PAGE;
+        fd.textContent = '♥ Donate';
+        wrap.appendChild(fd);
+      }
+
+      if (TESTIMONIALS_URL) {
+        var ft = document.createElement('a');
+        ft.className = 't';
+        ft.textContent = '▶ Watch Testimonials';
+        ft.href = tag(TESTIMONIALS_URL, 'footer-testimonials');
+        setTarget(ft, ft.href);
+        wrap.appendChild(ft);
+      }
+
+      var firstBlock = foot.querySelector('.foot > div') || foot;
+      firstBlock.appendChild(wrap);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else { init(); }
+
+})();
+
+</script></body></html>
