@@ -345,16 +345,25 @@
     </div>
 
     <div>
-      <label>9. Local Government Area / Area of Residence *</label>
-      <select required name="lga_residence" id="lgaResidence" onchange="var isOther=this.value==='Other'; var wrap=document.getElementById('otherLgaWrap'); var input=document.getElementById('otherLga'); wrap.style.display=isOther?'block':'none'; input.required=isOther; if(!isOther){input.value='';}">
-        <option value="" selected disabled>Select LGA / area</option>
+      <label>9. Local Government Area (LGA) of Origin *</label>
+      <select required name="lga_origin" id="lgaOrigin">
+        <option value="" selected disabled>Select LGA of origin</option>
         <option>Ardo Kola</option><option>Bali</option><option>Donga</option><option>Gashaka</option><option>Gassol</option><option>Ibi</option><option>Jalingo</option><option>Karim Lamido</option><option>Kurmi</option><option>Lau</option><option>Sardauna</option><option>Takum</option><option>Ussa</option><option>Wukari</option><option>Yorro</option><option>Zing</option><option value="Other">Other — Specify</option>
       </select>
-      <div class="conditional" id="otherLgaWrap" aria-live="polite"><label style="margin-top:12px">Specify your LGA / equivalent administrative area *</label><input name="other_lga" id="otherLga" placeholder="Enter your LGA / administrative area"></div>
+      <div class="conditional" id="otherLgaOriginWrap" aria-live="polite"><label style="margin-top:12px">Specify your LGA / equivalent administrative area *</label><input name="other_lga_origin" id="otherLgaOrigin" placeholder="Enter your LGA / administrative area"></div>
     </div>
 
     <div>
-      <label>10. Current Occupation/Status *</label>
+      <label>10. Local Government Area (LGA) / Area of Residence *</label>
+      <select required name="lga_residence" id="lgaResidence">
+        <option value="" selected disabled>Select LGA / area of residence</option>
+        <option>Ardo Kola</option><option>Bali</option><option>Donga</option><option>Gashaka</option><option>Gassol</option><option>Ibi</option><option>Jalingo</option><option>Karim Lamido</option><option>Kurmi</option><option>Lau</option><option>Sardauna</option><option>Takum</option><option>Ussa</option><option>Wukari</option><option>Yorro</option><option>Zing</option><option value="Other">Other — Specify</option>
+      </select>
+      <div class="conditional" id="otherLgaResidenceWrap" aria-live="polite"><label style="margin-top:12px">Specify your LGA / equivalent administrative area *</label><input name="other_lga_residence" id="otherLgaResidence" placeholder="Enter your LGA / administrative area"></div>
+    </div>
+
+    <div>
+      <label>11. Current Occupation/Status *</label>
       <select required name="occupation">
         <option value="">Select</option>
         <option>Student</option>
@@ -369,7 +378,7 @@
     </div>
 
     <div class="full">
-      <label>11. Organisation, Institution, Business or Community Group *</label>
+      <label>12. Organisation, Institution, Business or Community Group *</label>
       <input required name="organisation" placeholder="Enter organisation, institution, business or community group; write N/A if none">
     </div>
 
@@ -382,7 +391,7 @@
 
   <div class="full">
     <span class="label">
-      11. Which areas best describe your experience or interests? *
+      13. Which areas best describe your experience or interests? *
       <small>(Select up to 4)</small>
     </span>
 
@@ -393,7 +402,7 @@
 
   <div style="margin-top:18px">
     <label>
-      12. Briefly tell us about one leadership, community, business or social-impact activity you have participated in. *
+      14. Briefly tell us about one leadership, community, business or social-impact activity you have participated in. *
     </label>
     <textarea required name="leadership_activity"></textarea>
   </div>
@@ -405,21 +414,21 @@
 
   <div>
     <label>
-      13. What is one major challenge or opportunity related to agriculture, jobs or livelihoods that you see in your community? *
+      15. What is one major challenge or opportunity related to agriculture, jobs or livelihoods that you see in your community? *
     </label>
     <textarea required name="community_agri_challenge"></textarea>
   </div>
 
   <div style="margin-top:18px">
     <label>
-      14. If you had access to funding, mentorship and technical support, what business, project or solution would you like to develop? *
+      16. If you had access to funding, mentorship and technical support, what business, project or solution would you like to develop? *
     </label>
     <textarea required name="project_solution"></textarea>
   </div>
 
   <div style="margin-top:18px">
     <span class="label">
-      15. Which areas of agriculture or agribusiness interest you most? *
+      17. Which areas of agriculture or agribusiness interest you most? *
       <small>(Select up to 3)</small>
     </span>
 
@@ -444,21 +453,21 @@
 
   <div>
     <label>
-      16. Why do you want to participate in Taraba NEXTGEN Conference 2027, and what do you hope to gain? *
+      18. Why do you want to participate in Taraba NEXTGEN Conference 2027, and what do you hope to gain? *
     </label>
     <textarea required name="motivation"></textarea>
   </div>
 
   <div style="margin-top:18px">
     <label>
-      17. What is one practical action you would be willing to take after the conference? *
+      19. What is one practical action you would be willing to take after the conference? *
     </label>
     <textarea required name="post_action"></textarea>
   </div>
 
   <div style="margin-top:18px">
     <label>
-      18. Would you like to showcase a business, project, research, innovation or solution at the conference?
+      20. Would you like to showcase a business, project, research, innovation or solution at the conference?
     </label>
 
     <select name="showcase" id="showcase">
@@ -476,7 +485,7 @@
 
   <div style="margin-top:18px">
     <label>
-      19. Are you available to participate fully from 24–26 June 2027? *
+      21. Are you available to participate fully from 24–26 June 2027? *
     </label>
 
     <select required name="availability">
@@ -489,7 +498,7 @@
 
   <div style="margin-top:18px">
     <label>
-      20. Would you be interested in joining a post-conference NEXTGEN Youth Agriculture & Climate Network/Taskforce?
+      22. Would you be interested in joining a post-conference NEXTGEN Youth Agriculture & Climate Network/Taskforce?
     </label>
 
     <select name="taskforce">
@@ -773,7 +782,7 @@ const optionSets=document.querySelectorAll('.options');let setNo=0;optionSets.fo
 const steps=[...document.querySelectorAll('.step')],next=document.getElementById('next'),back=document.getElementById('back'),submit=document.getElementById('submit'),bar=document.getElementById('bar'),stepText=document.getElementById('stepText'),pct=document.getElementById('pct');let current=0;
 function showStep(){steps.forEach((s,i)=>s.classList.toggle('active',i===current));const p=Math.round((current+1)/steps.length*100);bar.style.width=p+'%';stepText.textContent=`Step ${current+1} of ${steps.length}`;pct.textContent=p+'%';back.style.visibility=current?'visible':'hidden';next.style.display=current===steps.length-1?'none':'block';submit.style.display=current===steps.length-1?'block':'none';document.getElementById('apply').scrollIntoView({behavior:'smooth',block:'start'})}
 function validStep(){const fields=[...steps[current].querySelectorAll('[required]')];for(const f of fields){if(!f.checkValidity()){f.reportValidity();return false}}const boxes=[...steps[current].querySelectorAll('.options')];for(const b of boxes){if(!b.querySelector('input:checked')){alert('Please select at least one option for each required multiple-choice question.');b.scrollIntoView({behavior:'smooth',block:'center'});return false}}return true}
-next.onclick=()=>{if(validStep()){current++;showStep()}};back.onclick=()=>{current--;showStep()};const showcase=document.getElementById('showcase'),showcaseDescription=document.getElementById('showcaseDescription');showcase.onchange=e=>{const yes=e.target.value==='Yes';document.getElementById('showcaseDesc').style.display=yes?'block':'none';showcaseDescription.required=yes;if(!yes)showcaseDescription.value='';};const lgaResidence=document.getElementById('lgaResidence'),otherLga=document.getElementById('otherLga');lgaResidence.onchange=e=>{const other=e.target.value==='Other';document.getElementById('otherLgaWrap').style.display=other?'block':'none';otherLga.required=other;if(!other)otherLga.value='';};
+next.onclick=()=>{if(validStep()){current++;showStep()}};back.onclick=()=>{current--;showStep()};const showcase=document.getElementById('showcase'),showcaseDescription=document.getElementById('showcaseDescription');showcase.onchange=e=>{const yes=e.target.value==='Yes';document.getElementById('showcaseDesc').style.display=yes?'block':'none';showcaseDescription.required=yes;if(!yes)showcaseDescription.value='';};function bindOtherLga(selectId,wrapId,inputId){const sel=document.getElementById(selectId),wrap=document.getElementById(wrapId),inp=document.getElementById(inputId);sel.addEventListener('change',()=>{const other=sel.value==='Other';wrap.style.display=other?'block':'none';inp.required=other;if(!other)inp.value='';});}bindOtherLga('lgaOrigin','otherLgaOriginWrap','otherLgaOrigin');bindOtherLga('lgaResidence','otherLgaResidenceWrap','otherLgaResidence');
 const WEB_APP_URL='https://script.google.com/macros/s/AKfycbxeQXWiClWxrb6FwEvmqO7BgXKUUlPGrpwZ0YP39OHJD2jF3n77Ra1xw0ajSU7x3TCqTw/exec';
 
 function collectApplicationData(form){
